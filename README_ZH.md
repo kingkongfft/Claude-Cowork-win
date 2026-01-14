@@ -62,9 +62,29 @@ cd agent-cowork
 
 # 安装依赖
 bun install
+# 或使用 npm
+npm install
 
-# 开发模式运行
+# 开发模式运行 (Linux/macOS)
 bun run dev
+
+# 开发模式运行 (Windows - 简单方式)
+# 方式 1: 使用批处理脚本
+run-windows.bat
+
+# 方式 2: 使用 PowerShell 脚本
+.\run-windows.ps1
+
+# 开发模式运行 (Windows - 手动方式)
+# 终端 1: 启动 Vite 开发服务器
+npm run dev:react
+
+# 终端 2: 编译并运行 Electron
+npm run transpile:electron
+npx cross-env NODE_ENV=development electron .
+
+# 注意：首次运行时，可能需要为 Electron 重新编译原生模块
+npx electron-rebuild
 
 # 或构建生产版本
 bun run dist:mac    # macOS

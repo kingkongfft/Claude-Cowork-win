@@ -69,7 +69,14 @@ npm install
 # Run in development mode (Linux/macOS with Bun)
 bun run dev
 
-# Run in development mode (Windows or with npm/npx)
+# Run in development mode (Windows - Easy Way)
+# Option 1: Using the batch script
+run-windows.bat
+
+# Option 2: Using PowerShell script
+.\run-windows.ps1
+
+# Run in development mode (Windows - Manual)
 # Terminal 1: Start Vite dev server
 npm run dev:react
 
