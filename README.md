@@ -43,9 +43,18 @@ If Claude Code works on your machine —
 
 Before using Agent Cowork, make sure Claude Code is installed and properly configured.
 
-### Option 1: Download a Release
+### Option 1: Download a Release (Recommended)
 
-👉 [Go to Releases](https://github.com/DevAgentForge/agent-cowork/releases)
+👉 [Go to Releases](https://github.com/kingkongfft/Claude-Cowork-win/releases)
+
+**Windows Downloads:**
+- **Agent Cowork Setup x.x.x.exe** - Installer (Recommended) - Installs the app to your system
+- **Agent Cowork x.x.x.exe** - Portable version - Run without installation
+
+After downloading:
+1. Run the installer or portable exe
+2. The app will start automatically
+3. Click "New Session" to start working with AI
 
 ---
 
