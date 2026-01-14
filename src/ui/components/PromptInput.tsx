@@ -25,18 +25,22 @@ export function usePromptActions(sendEvent: (event: ClientEvent) => void) {
 
   const handleSend = useCallback(async () => {
     if (!prompt.trim()) return;
+    console.log("handleSend called", { activeSessionId, prompt });
 
     if (!activeSessionId) {
       let title = "";
       try {
+        console.log("Generating session title...");
         setPendingStart(true);
         title = await window.electron.generateSessionTitle(prompt);
+        console.log("Session title generated:", title);
       } catch (error) {
-        console.error(error);
+        console.error("Error generating title:", error);
         setPendingStart(false);
         setGlobalError("Failed to get session title.");
         return;
       }
+      console.log("Sending session.start event");
       sendEvent({
         type: "session.start",
         payload: { title, prompt, cwd: cwd.trim() || undefined, allowedTools: DEFAULT_ALLOWED_TOOLS }

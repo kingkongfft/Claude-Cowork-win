@@ -15,24 +15,30 @@ const CLAUDE_SETTINGS_ENV_KEYS = [
 ] as const;
 
 export function loadClaudeSettingsEnv(): ClaudeSettingsEnv {
+  console.log("Loading Claude settings from ~/.claude/settings.json");
   try {
     const settingsPath = join(homedir(), ".claude", "settings.json");
+    console.log("Settings path:", settingsPath);
     const raw = readFileSync(settingsPath, "utf8");
     const parsed = JSON.parse(raw) as { env?: Record<string, unknown> };
+    console.log("Parsed settings:", JSON.stringify(parsed, null, 2));
     if (parsed.env) {
       for (const [key, value] of Object.entries(parsed.env)) {
-        if (process.env[key] === undefined && value !== undefined && value !== null) {
+        // Settings.json env vars override process.env (reversed priority)
+        if (value !== undefined && value !== null) {
+          console.log(`Setting ${key} = ${value}`);
           process.env[key] = String(value);
         }
       }
     }
-  } catch {
-    // Ignore missing or invalid settings file.
+  } catch (error) {
+    console.error("Error loading settings:", error);
   }
 
   const env = {} as ClaudeSettingsEnv;
   for (const key of CLAUDE_SETTINGS_ENV_KEYS) {
     env[key] = process.env[key] ?? "";
+    console.log(`claudeCodeEnv.${key} = ${env[key]}`);
   }
   return env;
 }

@@ -47,19 +47,30 @@ export const enhancedEnv = getEnhancedEnv();
 export const generateSessionTitle = async (userIntent: string | null) => {
   if (!userIntent) return "New Session";
 
-  const result: SDKResultMessage = await unstable_v2_prompt(
-    `please analynis the following user input to generate a short but clearly title to identify this conversation theme:
-    ${userIntent}
-    directly output the title, do not include any other content`, {
-    model: claudeCodeEnv.ANTHROPIC_MODEL,
-    env: enhancedEnv,
-    pathToClaudeCodeExecutable: claudeCodePath,
-  });
+  try {
+    console.log("Generating session title with prompt:", userIntent.substring(0, 50) + "...");
+    console.log("Using model:", claudeCodeEnv.ANTHROPIC_MODEL);
+    console.log("Auth token available:", !!claudeCodeEnv.ANTHROPIC_AUTH_TOKEN);
+    console.log("Base URL:", claudeCodeEnv.ANTHROPIC_BASE_URL);
+    
+    const result: SDKResultMessage = await unstable_v2_prompt(
+      `please analynis the following user input to generate a short but clearly title to identify this conversation theme:
+      ${userIntent}
+      directly output the title, do not include any other content`, {
+      model: claudeCodeEnv.ANTHROPIC_MODEL,
+      env: enhancedEnv,
+      pathToClaudeCodeExecutable: claudeCodePath,
+    });
 
-  if (result.subtype === "success") {
-    return result.result;
+    console.log("Title generation result:", result);
+
+    if (result.subtype === "success") {
+      return result.result;
+    }
+
+    return "New Session";
+  } catch (error) {
+    console.error("Error generating title:", error);
+    return "New Session";
   }
-
-
-  return "New Session";
 };
