@@ -1,8 +1,10 @@
 [简体中文](README_ZH.md)
 
-# Claude Cowork
+# Claude Cowork (Windows)
 
-A **desktop AI assistant** that helps you with **programming, file management, and any task you can describe**.
+🪟 **Windows-optimized fork** of Claude Cowork - A desktop AI assistant for programming, file management, and any task you can describe.
+
+This repository is specifically tailored for **Windows users** with easy-to-use scripts and pre-built executables.
 
 It is **fully compatible with the exact same configuration as Claude Code**, which means you can run it with **any Anthropic-compatible large language model**.
 
@@ -58,34 +60,41 @@ After downloading:
 
 ---
 
-### Option 2: Build from Source
+### Option 2: Quick Run from Source (Windows)
 
 #### Prerequisites
 
-- [Bun](https://bun.sh/) or Node.js 18+
+- Node.js 18+
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 
 ```bash
 # Clone the repository
-git clone https://github.com/DevAgentForge/agent-cowork.git
-cd agent-cowork
+git clone https://github.com/kingkongfft/Claude-Cowork-win.git
+cd Claude-Cowork-win
 
-# Install dependencies
-bun install
-# Or with npm
-npm install
-
-# Run in development mode (Linux/macOS with Bun)
-bun run dev
-
-# Run in development mode (Windows - Easy Way)
-# Option 1: Using the batch script
+# Quick run with one command (Recommended for Windows)
+# Option 1: Using the batch script (double-click or run in cmd)
 run-windows.bat
 
 # Option 2: Using PowerShell script
 .\run-windows.ps1
+```
 
-# Run in development mode (Windows - Manual)
+The scripts will automatically:
+- Install dependencies (if needed)
+- Transpile Electron code (if needed)
+- Rebuild native modules (on first run)
+- Start the Vite dev server
+- Launch the Electron app
+
+---
+
+### Option 3: Manual Setup
+
+```bash
+# Install dependencies
+npm install
+
 # Terminal 1: Start Vite dev server
 npm run dev:react
 
@@ -95,12 +104,22 @@ npx cross-env NODE_ENV=development electron .
 
 # Note: On first run, you may need to rebuild native modules for Electron
 npx electron-rebuild
-
-# Or build production binaries
-bun run dist:mac    # macOS
-bun run dist:win    # Windows
-bun run dist:linux  # Linux
 ```
+
+---
+
+### Build Production Executables
+
+```bash
+# Build Windows exe (installer + portable)
+npx tsc --project src/electron/tsconfig.json
+npm run build
+npx electron-builder --win --x64
+```
+
+Output files in `dist/` folder:
+- `Agent Cowork Setup x.x.x.exe` - NSIS installer
+- `Agent Cowork x.x.x.exe` - Portable exe
 
 ---
 
