@@ -21,8 +21,9 @@
     },
     "win": {
         "target": [
-            "portable",
-            "msi"
-        ]
+            "portable"
+        ],
+        "signAndEditExecutable": false,
+        "verifyUpdateCodeSignature": false
     }
 }
