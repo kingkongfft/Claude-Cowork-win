@@ -21,13 +21,14 @@ export function loadClaudeSettingsEnv(): ClaudeSettingsEnv {
     const parsed = JSON.parse(raw) as { env?: Record<string, unknown> };
     if (parsed.env) {
       for (const [key, value] of Object.entries(parsed.env)) {
-        if (process.env[key] === undefined && value !== undefined && value !== null) {
+        // Settings.json env vars override process.env (reversed priority)
+        if (value !== undefined && value !== null) {
           process.env[key] = String(value);
         }
       }
     }
-  } catch {
-    // Ignore missing or invalid settings file.
+  } catch (error) {
+    console.error("Error loading settings:", error);
   }
 
   const env = {} as ClaudeSettingsEnv;

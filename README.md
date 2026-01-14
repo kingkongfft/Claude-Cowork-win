@@ -56,22 +56,35 @@ Before using Agent Cowork, make sure Claude Code is installed and properly confi
 - [Bun](https://bun.sh/) or Node.js 18+
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 
-bash
+```bash
 # Clone the repository
 git clone https://github.com/DevAgentForge/agent-cowork.git
 cd agent-cowork
 
 # Install dependencies
 bun install
+# Or with npm
+npm install
 
-# Run in development mode
+# Run in development mode (Linux/macOS with Bun)
 bun run dev
+
+# Run in development mode (Windows or with npm/npx)
+# Terminal 1: Start Vite dev server
+npm run dev:react
+
+# Terminal 2: Transpile and run Electron
+npm run transpile:electron
+npx cross-env NODE_ENV=development electron .
+
+# Note: On first run, you may need to rebuild native modules for Electron
+npx electron-rebuild
 
 # Or build production binaries
 bun run dist:mac    # macOS
 bun run dist:win    # Windows
 bun run dist:linux  # Linux
-`
+```
 
 ---
 
@@ -152,13 +165,21 @@ This means:
 
 ## 🛠 Development
 
-bash
+```bash
 # Start development server (hot reload)
 bun run dev
 
+# For Windows or npm users:
+# Terminal 1:
+npm run dev:react
+# Terminal 2:
+npm run transpile:electron && npx cross-env NODE_ENV=development electron .
+
 # Type checking / build
 bun run build
-
+# Or with npm:
+npm run build
+```
 
 ---
 

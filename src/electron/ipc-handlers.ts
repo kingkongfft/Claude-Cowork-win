@@ -63,6 +63,7 @@ export function handleClientEvent(event: ClientEvent) {
   }
 
   if (event.type === "session.start") {
+    console.log("Creating new session:", event.payload);
     const session = sessions.createSession({
       cwd: event.payload.cwd,
       title: event.payload.title,
@@ -70,6 +71,7 @@ export function handleClientEvent(event: ClientEvent) {
       prompt: event.payload.prompt
     });
 
+    console.log("Session created:", session.id);
     sessions.updateSession(session.id, {
       status: "running",
       lastPrompt: event.payload.prompt
@@ -98,6 +100,7 @@ export function handleClientEvent(event: ClientEvent) {
         sessions.setAbortController(session.id, undefined);
       })
       .catch((error) => {
+        console.error("Session error:", error);
         sessions.updateSession(session.id, { status: "error" });
         emit({
           type: "session.status",

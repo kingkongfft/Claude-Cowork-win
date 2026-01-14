@@ -7,7 +7,11 @@ import { generateSessionTitle } from "./libs/util.js";
 import type { ClientEvent } from "./types.js";
 import "./libs/claude-settings.js";
 
+console.log("Electron app starting...");
+console.log("Environment:", process.env.NODE_ENV);
+
 app.on("ready", () => {
+    console.log("App ready event fired");
     const mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -22,9 +26,13 @@ app.on("ready", () => {
         trafficLightPosition: { x: 15, y: 18 }
     });
 
-    if (isDev()) mainWindow.loadURL(`http://localhost:${DEV_PORT}`)
-    else mainWindow.loadFile(getUIPath());
+    if (isDev()) {
+        mainWindow.loadURL(`http://localhost:${DEV_PORT}`);
+    } else {
+        mainWindow.loadFile(getUIPath());
+    }
 
+    console.log("Main window created and loading UI");
     pollResources(mainWindow);
 
     ipcMainHandle("getStaticData", () => {
