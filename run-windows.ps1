@@ -4,6 +4,12 @@
 Write-Host "Starting Claude Cowork on Windows..." -ForegroundColor Green
 Write-Host ""
 
+# Kill any existing Vite and Electron processes
+Write-Host "Stopping any existing processes..." -ForegroundColor Yellow
+Get-Process electron -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+Start-Sleep -Seconds 1
+
 # Check if node_modules exists
 if (-not (Test-Path "node_modules")) {
     Write-Host "Installing dependencies..." -ForegroundColor Yellow

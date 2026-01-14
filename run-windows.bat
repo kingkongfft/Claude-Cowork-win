@@ -2,6 +2,12 @@
 echo Starting Claude Cowork on Windows...
 echo.
 
+REM Kill any existing Vite and Electron processes
+echo Stopping any existing processes...
+taskkill /F /IM electron.exe 2>nul
+for /f "tokens=5" %%a in ('netstat -aon ^| find ":5173" ^| find "LISTENING"') do taskkill /F /PID %%a 2>nul
+timeout /t 1 /nobreak > nul
+
 REM Check if node_modules exists
 if not exist "node_modules" (
     echo Installing dependencies...
