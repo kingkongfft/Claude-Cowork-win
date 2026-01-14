@@ -21,9 +21,16 @@
     },
     "win": {
         "target": [
+            "nsis",
             "portable"
         ],
         "signAndEditExecutable": false,
         "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true
     }
 }

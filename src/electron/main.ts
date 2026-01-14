@@ -57,14 +57,32 @@ app.on("ready", () => {
 
     // Handle directory selection
     ipcMainHandle("select-directory", async () => {
-        const result = await dialog.showOpenDialog(mainWindow, {
-            properties: ['openDirectory']
-        });
-        
-        if (result.canceled) {
+        console.log("select-directory IPC handler called");
+        try {
+            const focusedWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+            console.log("Focused window:", focusedWindow ? "found" : "not found");
+            console.log("All windows count:", BrowserWindow.getAllWindows().length);
+            
+            if (!focusedWindow) {
+                console.error("No window available for dialog");
+                return null;
+            }
+            
+            console.log("Opening dialog...");
+            const result = await dialog.showOpenDialog(focusedWindow, {
+                properties: ['openDirectory']
+            });
+            
+            console.log("Dialog result:", result);
+            
+            if (result.canceled) {
+                return null;
+            }
+            
+            return result.filePaths[0];
+        } catch (error) {
+            console.error("Error in select-directory:", error);
             return null;
         }
-        
-        return result.filePaths[0];
     });
 })
