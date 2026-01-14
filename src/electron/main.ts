@@ -28,8 +28,6 @@ app.on("ready", () => {
 
     if (isDev()) {
         mainWindow.loadURL(`http://localhost:${DEV_PORT}`);
-        mainWindow.webContents.openDevTools();
-        console.log("Development mode - DevTools opened");
     } else {
         mainWindow.loadFile(getUIPath());
     }
