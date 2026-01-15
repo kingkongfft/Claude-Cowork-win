@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ServerEvent, SessionStatus, StreamMessage } from "../types";
+import type { ServerEvent, SessionStatus, StreamMessage, FileItem, FileEvent } from "../types";
 
 export type PermissionRequest = {
   toolUseId: string;
@@ -30,6 +30,10 @@ interface AppState {
   sessionsLoaded: boolean;
   showStartModal: boolean;
   historyRequested: Set<string>;
+  
+  // File browser state
+  fileItems: Record<string, FileItem[]>; // keyed by sessionId
+  recentFileEvents: Record<string, FileEvent[]>; // recent changes per session
 
   setPrompt: (prompt: string) => void;
   setCwd: (cwd: string) => void;
@@ -56,6 +60,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   sessionsLoaded: false,
   showStartModal: false,
   historyRequested: new Set(),
+  fileItems: {},
+  recentFileEvents: {},
 
   setPrompt: (prompt) => set({ prompt }),
   setCwd: (cwd) => set({ cwd }),
@@ -244,6 +250,36 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       case "runner.error": {
         set({ globalError: event.payload.message });
+        break;
+      }
+
+      case "file.list": {
+        const { sessionId, items } = event.payload;
+        set((state) => ({
+          fileItems: {
+            ...state.fileItems,
+            [sessionId]: items
+          },
+          recentFileEvents: {
+            ...state.recentFileEvents,
+            [sessionId]: []
+          }
+        }));
+        break;
+      }
+
+      case "file.updates": {
+        const { sessionId, items, events } = event.payload;
+        set((state) => ({
+          fileItems: {
+            ...state.fileItems,
+            [sessionId]: items
+          },
+          recentFileEvents: {
+            ...state.recentFileEvents,
+            [sessionId]: events || []
+          }
+        }));
         break;
       }
     }

@@ -7,6 +7,7 @@ import { Sidebar } from "./components/Sidebar";
 import { StartSessionModal } from "./components/StartSessionModal";
 import { PromptInput, usePromptActions } from "./components/PromptInput";
 import { MessageCard } from "./components/EventCard";
+import { FilePanel } from "./components/FilePanel";
 import MDContent from "./render/markdown";
 
 function App() {
@@ -122,7 +123,7 @@ function App() {
         onDeleteSession={handleDeleteSession}
       />
 
-      <main className="flex flex-1 flex-col ml-[280px] bg-surface-cream">
+      <main className="flex flex-1 flex-col ml-[280px] mr-[280px] bg-surface-cream">
         <div 
           className="flex items-center justify-center h-12 border-b border-ink-900/10 bg-surface-cream select-none"
           style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
@@ -180,6 +181,11 @@ function App() {
 
         <PromptInput sendEvent={sendEvent} />
       </main>
+
+      {/* Right side file panel */}
+      <aside className="fixed right-0 top-0 h-full w-[280px] border-l border-ink-900/10 bg-surface">
+        <FilePanel />
+      </aside>
 
       {showStartModal && (
         <StartSessionModal

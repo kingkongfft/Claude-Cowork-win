@@ -28,7 +28,9 @@ electron.contextBridge.exposeInMainWorld("electron", {
     getRecentCwds: (limit?: number) => 
         ipcInvoke("get-recent-cwds", limit),
     selectDirectory: () => 
-        ipcInvoke("select-directory")
+        ipcInvoke("select-directory"),
+    openPath: (filePath: string) => 
+        ipcInvoke("open-path", filePath)
 } satisfies Window['electron'])
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(key: Key, ...args: any[]): Promise<EventPayloadMapping[Key]> {

@@ -11,6 +11,23 @@ export type ClaudeSettingsEnv = {
   CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: string;
 };
 
+// File item for file browser
+export type FileItem = {
+  path: string;
+  relativePath: string;
+  name: string;
+  isDir: boolean;
+  size: number;
+  mtime: number;
+};
+
+// File change event
+export type FileEvent = {
+  type: "add" | "change" | "unlink" | "addDir" | "unlinkDir";
+  path: string;
+  item?: FileItem;
+};
+
 export type UserPromptMessage = {
   type: "user_prompt";
   prompt: string;
@@ -39,7 +56,9 @@ export type ServerEvent =
   | { type: "session.history"; payload: { sessionId: string; status: SessionStatus; messages: StreamMessage[] } }
   | { type: "session.deleted"; payload: { sessionId: string } }
   | { type: "permission.request"; payload: { sessionId: string; toolUseId: string; toolName: string; input: unknown } }
-  | { type: "runner.error"; payload: { sessionId?: string; message: string } };
+  | { type: "runner.error"; payload: { sessionId?: string; message: string } }
+  | { type: "file.list"; payload: { sessionId: string; items: FileItem[]; events?: FileEvent[] } }
+  | { type: "file.updates"; payload: { sessionId: string; items: FileItem[]; events?: FileEvent[] } };
 
 // Client -> Server events
 export type ClientEvent =
