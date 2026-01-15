@@ -2,6 +2,7 @@ import { BrowserWindow } from "electron";
 import type { ClientEvent, ServerEvent } from "./types.js";
 import { runClaude, type RunnerHandle } from "./libs/runner.js";
 import { SessionStore } from "./libs/session-store.js";
+import { startWatching, stopWatching } from "./libs/file-watcher.js";
 import { app } from "electron";
 import { join } from "path";
 
@@ -51,6 +52,12 @@ export function handleClientEvent(event: ClientEvent) {
       });
       return;
     }
+    
+    // Start file watcher when selecting a session
+    if (history.session.cwd) {
+      startWatching(history.session.id, history.session.cwd);
+    }
+    
     emit({
       type: "session.history",
       payload: {
@@ -76,6 +83,12 @@ export function handleClientEvent(event: ClientEvent) {
       status: "running",
       lastPrompt: event.payload.prompt
     });
+    
+    // Start file watcher for this session's cwd
+    if (session.cwd) {
+      startWatching(session.id, session.cwd);
+    }
+    
     emit({
       type: "session.status",
       payload: { sessionId: session.id, status: "running", title: session.title, cwd: session.cwd }
@@ -200,6 +213,9 @@ export function handleClientEvent(event: ClientEvent) {
       handle.abort();
       runnerHandles.delete(sessionId);
     }
+
+    // Stop file watcher for this session
+    stopWatching(sessionId);
 
     // Always try to delete and emit deleted event
     // Don't emit error if session doesn't exist - it may have already been deleted

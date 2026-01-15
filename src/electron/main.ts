@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron"
+import { app, BrowserWindow, ipcMain, dialog, shell } from "electron"
 import { ipcMainHandle, isDev, DEV_PORT } from "./util.js";
 import { getPreloadPath, getUIPath, getIconPath } from "./pathResolver.js";
 import { getStaticData, pollResources } from "./test.js";
@@ -10,20 +10,51 @@ import "./libs/claude-settings.js";
 console.log("Electron app starting...");
 console.log("Environment:", process.env.NODE_ENV);
 
+// Catch uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+app.on('window-all-closed', () => {
+    console.log('All windows closed');
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('before-quit', () => {
+    console.log('App is about to quit');
+});
+
 app.on("ready", () => {
     console.log("App ready event fired");
+    const isMac = process.platform === "darwin";
     const mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
         minWidth: 900,
         minHeight: 600,
+        show: true,
         webPreferences: {
             preload: getPreloadPath(),
         },
         icon: getIconPath(),
-        titleBarStyle: "hiddenInset",
         backgroundColor: "#FAF9F6",
-        trafficLightPosition: { x: 15, y: 18 }
+        ...(isMac ? {
+            titleBarStyle: "hiddenInset",
+            trafficLightPosition: { x: 15, y: 18 }
+        } : {})
+    });
+
+    // Force window to show and focus
+    mainWindow.once('ready-to-show', () => {
+        console.log("Window ready-to-show event fired");
+        mainWindow.show();
+        mainWindow.focus();
     });
 
     if (isDev()) {
@@ -31,6 +62,17 @@ app.on("ready", () => {
     } else {
         mainWindow.loadFile(getUIPath());
     }
+
+    // Log any load errors
+    mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+        console.error(`Failed to load: ${errorCode} - ${errorDescription}`);
+    });
+
+    // Log renderer console messages to main process
+    mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+        const levelStr = ['verbose', 'info', 'warning', 'error'][level] || 'log';
+        console.log(`[Renderer ${levelStr}] ${message}`);
+    });
 
     console.log("Main window created and loading UI");
     pollResources(mainWindow);
@@ -53,6 +95,17 @@ app.on("ready", () => {
     ipcMainHandle("get-recent-cwds", (_: any, limit?: number) => {
         const boundedLimit = limit ? Math.min(Math.max(limit, 1), 20) : 8;
         return sessions.listRecentCwds(boundedLimit);
+    });
+
+    // Handle opening files/folders in system explorer
+    ipcMainHandle("open-path", async (_: any, filePath: string) => {
+        try {
+            const result = await shell.openPath(filePath);
+            return result === "" ? null : result; // empty string means success
+        } catch (error) {
+            console.error("Error opening path:", error);
+            return String(error);
+        }
     });
 
     // Handle directory selection

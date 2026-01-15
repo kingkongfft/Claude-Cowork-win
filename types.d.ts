@@ -18,6 +18,7 @@ type EventPayloadMapping = {
     "generate-session-title": string;
     "get-recent-cwds": string[];
     "select-directory": string | null;
+    "open-path": string | null;
 }
 
 interface Window {
@@ -30,5 +31,6 @@ interface Window {
         generateSessionTitle: (userInput: string | null) => Promise<string>;
         getRecentCwds: (limit?: number) => Promise<string[]>;
         selectDirectory: () => Promise<string | null>;
+        openPath: (filePath: string) => Promise<string | null>;
     }
 }
